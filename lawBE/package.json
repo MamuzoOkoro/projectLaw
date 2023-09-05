@@ -4,7 +4,8 @@
   "description": "A platform that connects Ajegunle people socially, intellecturally and professionally",
   "main": "intex.ts",
   "scripts": {
-    "test": "ts-node-dev --respawn index.ts"
+    "test": "ts-node-dev --respawn index.ts",
+    "start": "ts-node-dev --respawn index.ts"
   },
   "repository": {
     "type": "git",
