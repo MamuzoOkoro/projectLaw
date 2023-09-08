@@ -22,6 +22,35 @@ model authModel {
 
    verified Boolean @default(false)
    token String?
+
+   role String
+   roleID String? @unique
    
 createdAt DateTime @default(now())
+}
+
+model userModel {
+  id String @id @default(uuid())
+
+  rating Int
+  comments String
+like Int
+reply String
+law lawModel []
+}
+
+model lawModel {
+  id String @id @default(uuid())
+
+  user userModel @relation(fields: [userID], references: [id])
+  userID String
+
+  reply String
+  
+  image String
+  imageID String
+
+  title String
+  description String
+  content String
 }
