@@ -11,7 +11,7 @@ export const createAccountValidator = joi.object({
     confirm:joi.ref("password")
 })
 
-export const signINAccountValidator = joi.object({
+export const signInAccountValidator = joi.object({
     email:joi.string().lowercase().trim().required(),
     password:joi.string().pattern(new RegExp(regex)).required(),
 })
