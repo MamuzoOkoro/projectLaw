@@ -1,12 +1,11 @@
-import GlobalButtonProps from '../global/GlobalButtonProps'
-import LawCard from '../global/LawCard'
 import Hero from './Hero'
+import PostReviews from './PostReviews'
 
 const HomeScreen = () => {
   return (
     <div>
       <Hero/>
-        <LawCard/>
+      <PostReviews/>
     </div>
   )
 }
