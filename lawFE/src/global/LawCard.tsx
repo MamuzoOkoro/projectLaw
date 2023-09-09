@@ -1,15 +1,20 @@
-import React from 'react'
-import GlobalButtonProps from './GlobalButtonProps'
+import GlobalButtonProps from "./GlobalButtonProps";
 
 const LawCard = () => {
   return (
     <div>
-        <GlobalButtonProps h='h-[40px]' w='w-[120px]' text='Get Started' bg="bg-green-400"
- col='black'/>
-
-        hhhh
+  <div>
+    <div>
+        <div>avtar</div>
+        <div></div>
     </div>
-  )
-}
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+  </div>
+  <div><img src="" alt="" /></div>
+    </div>
+  );
+};
 
-export default LawCard
+export default LawCard;
