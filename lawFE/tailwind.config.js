@@ -5,7 +5,7 @@ export default {
     extend: {
       screens: {
         medium: { max: "768px" },
-        small: { max: "320px" },
+        small: { max: "360px" },
       },
     },
   },
