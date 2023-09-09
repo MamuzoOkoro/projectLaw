@@ -11,7 +11,7 @@ interface iBtn{
 
 const GlobalButtonProps:React.FC<iBtn> = ({h,w,bg,text,col,font}) => {
   return (
-    <div className={`h-${h} w-${w} bg-${bg} text-${col} justify-center items-center flex rounded-[30px] capitalize text-[13px] font-${font} cursor-pointer`}>
+    <div className={`${h} ${w} ${bg} ${col} justify-center items-center flex rounded-[30px] capitalize text-[13px] ${font} cursor-pointer`}>
         {text}
     </div>
   )
