@@ -19,7 +19,10 @@ const PostReviews = () => {
         {/* main */}
         <div className="flex w-[90%]">
             {/* hold */}
-    <div className="">
+    <div className="medium:leading-3">
+      <div className="big:hidden medium:block small:block">
+      <Categories/>
+      </div>
     <ReviewProps
               avatar={img}
               boxImg={boxImg}
@@ -86,7 +89,9 @@ const PostReviews = () => {
             />
         </div>
         {/* main */}
-        <Categories/>
+       <div className="medium:hidden small:hidden w-[35%]">
+       <Categories/>
+       </div>
         </div>
     </div>
   )
