@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       screens: {
-        medium: { max: "768px" },
+        medium: { max: "780px" },
         small: { max: "360px" },
       },
     },
