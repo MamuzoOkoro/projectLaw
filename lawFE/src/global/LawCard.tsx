@@ -1,20 +1,13 @@
-import GlobalButtonProps from "./GlobalButtonProps";
+// // import cron from 'node-cron';
 
-const LawCard = () => {
-  return (
-    <div>
-  <div>
-    <div>
-        <div>avtar</div>
-        <div></div>
-    </div>
-    <div>2</div>
-    <div>3</div>
-    <div>4</div>
-  </div>
-  <div><img src="" alt="" /></div>
-    </div>
-  );
-};
-
-export default LawCard;
+// // Define a function to send reminders
+// function sendReminder() {
+//     // Replace this with your reminder logic (e.g., send a notification)
+//     console.log('Reminder: It\'s time to complete your task!');
+//   }
+  
+//   // Schedule the cron job to run at 9 AM and 10 PM every day
+//   cron.schedule('0 9,22 * * *', sendReminder); // 9 AM and 10 PM in 24-hour format
+  
+//   console.log('Cron job started. Reminders will be sent at 9 AM and 10 PM every day.');
+  
