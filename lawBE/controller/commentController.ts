@@ -17,7 +17,7 @@ export const commentOnInterpretation = async (req: Request, res: Response) => {
 
     if (user && interpretation) {
       const comment = await prisma.commentModel.create({
-        data: { comments, lawID },
+        data: { comments, lawID, userID },
       });
       interpretation.comments.push(comment);
       return res.status(201).json({
@@ -51,20 +51,16 @@ export const deleteComment = async (req: Request, res: Response) => {
       },
     });
 
-    console.log(user?.id);
-
-    // console.log(user?.id, commented?.userID);
-
-    // if (user?.id === commented?.userID) {
-    //   await prisma.commentModel.delete({
-    //     where: { id: commentID },
-    //   });
-    //   return res.status(201).json("comment deleted");
-    // } else {
-    //   return res.status(404).json({
-    //     message: "na you comment am?",
-    //   });
-    // }
+    if (user?.id === commented?.userID) {
+      await prisma.commentModel.delete({
+        where: { id: commentID },
+      });
+      return res.status(201).json("comment deleted");
+    } else {
+      return res.status(404).json({
+        message: "na you comment am?",
+      });
+    }
   } catch (error) {
     return res
       .status(404)

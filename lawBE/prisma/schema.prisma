@@ -63,8 +63,8 @@ model commentModel {
 
   createdAt DateTime @default(now())
 
-  law   lawModel @relation(fields: [lawID], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  lawID String
+  law    lawModel @relation(fields: [lawID], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  lawID  String
   userID String
 
   reply replyModel[]
