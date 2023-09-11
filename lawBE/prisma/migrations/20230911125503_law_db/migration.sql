@@ -44,6 +44,7 @@ CREATE TABLE "commentModel" (
     "comments" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "lawID" TEXT NOT NULL,
+    "userID" TEXT NOT NULL,
 
     CONSTRAINT "commentModel_pkey" PRIMARY KEY ("id")
 );
