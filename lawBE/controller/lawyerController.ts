@@ -78,31 +78,31 @@ export const viewOneInterpretedLaw = async(req:Request, res:Response)=>{
     }
 }
 
-export const viewLawyerInterpretedLaw= async(req:Request, res:Response)=>{
-    try {
-        const {userID} =req.params
+// export const viewLawyerInterpretedLaw= async(req:Request, res:Response)=>{
+//     try {
+//         const {userID} =req.params
         
-        const user = await prisma.authModel.findUnique({
-            where:{id:userID},
+//         const user = await prisma.authModel.findUnique({
+//             where:{id:userID},
 
-        })
-        if (user) {
-            return res.status(200).json({
-                message:"can view a lawyer law's",
-                data:user
-            })
-        } else {
-            return res.status(404).json({
-                message: "lawyer not found",
-              }); 
-        }
-    } catch (error:any) {
-        return res.status(404).json({
-            message: "cannot view lawyer law's",
-            data: error.message,
-          });
-    }
-}
+//         })
+//         if (user) {
+//             return res.status(200).json({
+//                 message:"can view a lawyer law's",
+//                 data:user
+//             })
+//         } else {
+//             return res.status(404).json({
+//                 message: "lawyer not found",
+//               }); 
+//         }
+//     } catch (error:any) {
+//         return res.status(404).json({
+//             message: "cannot view lawyer law's",
+//             data: error.message,
+//           });
+//     }
+// }
 
 export const updateInterpretedLaw = async(req: Request, res: Response)=>{
     try {
