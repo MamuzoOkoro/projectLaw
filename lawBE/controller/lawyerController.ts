@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { streamUpload } from "../utils/uploadHelper";
+import { role } from "../utils/roles";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +15,7 @@ export const interpretedLaw = async (req: Request, res: Response) => {
       where: { id: userID }
     });
 
-    if (registered?.role) {
+    if (registered) {
       const law = await prisma.lawModel.create({
         data: {
           description,
@@ -22,6 +23,7 @@ export const interpretedLaw = async (req: Request, res: Response) => {
           content,
           image: secure_url,
           imageID: public_id,
+          userID
         },
       });
       return res.status(201).json({
@@ -87,7 +89,7 @@ export const viewLawyerInterpretedLaw= async(req:Request, res:Response)=>{
         if (user) {
             return res.status(200).json({
                 message:"can view a lawyer law's",
-                data:user.law
+                data:user
             })
         } else {
             return res.status(404).json({
