@@ -37,9 +37,33 @@ export const commentOnInterpretation = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteComment = async (req: Request, res: Response) => {
+export const viewInterpretationComment = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const { commentID, userID } = req.params;
+    const { lawID } = req.params;
+    const interpretation = await prisma.lawModel.findUnique({
+      where: { id: lawID },
+      include: { comments: true },
+    });
+    return res.status(200).json({
+      message: "All Interpretation Comments",
+      data: interpretation?.comments,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: "Error viewing comments",
+    });
+  }
+};
+
+export const deleteTnterpretationComment = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { userID, commentID } = req.params;
 
     const user = await prisma.authModel.findUnique({
       where: { id: userID },
@@ -65,23 +89,5 @@ export const deleteComment = async (req: Request, res: Response) => {
     return res
       .status(404)
       .json({ message: "error deleting comment", data: error });
-  }
-};
-
-export const viewProductComment = async (req: Request, res: Response) => {
-  try {
-    const { lawID } = req.params;
-    const interpretation = await prisma.lawModel.findUnique({
-      where: { id: lawID },
-      include: { comments: true },
-    });
-    return res.status(200).json({
-      message: "All Interpretation Comments",
-      data: interpretation?.comments,
-    });
-  } catch (error) {
-    return res.status(404).json({
-      message: "Error viewing comments",
-    });
   }
 };

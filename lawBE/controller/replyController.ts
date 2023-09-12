@@ -38,7 +38,7 @@ export const replyComment = async (req: Request, res: Response) => {
   }
 };
 
-export const viewAllReply = async (req: Request, res: Response) => {
+export const viewAllReplies = async (req: Request, res: Response) => {
   try {
     const { userID, commentID } = req.params;
     const user = await prisma.authModel.findUnique({
@@ -56,17 +56,47 @@ export const viewAllReply = async (req: Request, res: Response) => {
       const reply = await prisma.replyModel.findMany({});
 
       return res.status(201).json({
-        message: "All replied comment gotten",
+        message: "All replies to comment gotten",
         data: reply,
       });
     } else {
       return res.status(401).json({
-        message: "Error replying comment",
+        message: "Error viewing all replies to comment",
       });
     }
   } catch (error) {
     return res.status(404).json({
       message: "error",
     });
+  }
+};
+export const deleteReply = async (req: Request, res: Response) => {
+  try {
+    const { userID, replyID } = req.params;
+
+    const user = await prisma.authModel.findUnique({
+      where: { id: userID },
+    });
+
+    const replied = await prisma.commentModel.findUnique({
+      where: {
+        id: replyID,
+      },
+    });
+
+    if (user?.id === replied?.userID) {
+      await prisma.replyModel.delete({
+        where: { id: replyID },
+      });
+      return res.status(201).json({
+        message: "Your reply was deleted",
+      });
+    } else {
+      return res.status(404).json({
+        message: "na you comment am?",
+      });
+    }
+  } catch (error) {
+    return res.status(404).json({ message: "error deleting comment" });
   }
 };
