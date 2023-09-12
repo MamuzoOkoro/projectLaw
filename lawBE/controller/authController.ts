@@ -26,7 +26,7 @@ export const registerUSer = async (req:any,res:Response)=>{
                 email,
                 password:hashed,
                 token,
-                role:role.USER
+                role:role.USER,
             }
         })
 
