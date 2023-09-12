@@ -52,3 +52,41 @@ export const sendAccountOpeningMail = async (user: any, tokenID: string) => {
     console.log(error);
   }
 };
+
+export const resetAccountPassword = async (user: any, tokenID: string) => {
+  try {
+    const getAccess: any = (await oAuth.getAccessToken()).token;
+
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "ajegunlelaw@gmail.com",
+        clientId: GOOGLE_ID,
+        clientSecret: GOOGLE_SECRET,
+        refreshToken: GOOGLE_REFRESH_TOKEN,
+        accessToken: getAccess,
+      },
+    });
+
+    const passedData = {
+      userName: user.userName,
+      url: `${url}/${tokenID}/verify-account`,
+    };
+
+    const readData = path.join(__dirname, "../views/index.ejs");
+    const data = await ejs.renderFile(readData, passedData);
+
+    const mailer = {
+      from: " <ajegunlelaw@gmail.com > ",
+      to: user.email,
+      subject:
+        "Welcome to AJ LAW Constituency, Where Ajegunle's Laws are clarified and properly interpreted!",
+      html: data,
+    };
+
+    transport.sendMail(mailer);
+  } catch (error) {
+    console.log(error);
+  }
+};
