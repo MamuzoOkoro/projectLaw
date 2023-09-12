@@ -3,6 +3,7 @@ import {PrismaClient} from "@prisma/client"
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
 import bcrypt from "bcrypt";
+import { role } from "../utils/roles";
 
 
 const prisma = new PrismaClient();
@@ -23,12 +24,14 @@ export const registerUSer = async (req:any,res:Response)=>{
             data:{
                 name,
                 email,
-                password:hashed,token  
+                password:hashed,
+                token,
+                role:role.USER,
             }
         })
 
         // const tokenID = jwt.sign({
-            // id:user.id},"justRand");sendAccountOpeningMail(user,tokenID)
+        //     id:user.id},"justRand");sendAccountOpeningMail(user,tokenID)
         
             return res.status(201).json({
                 message: "User created",
