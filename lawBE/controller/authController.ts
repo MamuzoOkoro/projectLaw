@@ -1,259 +1,259 @@
-import {Request,Response} from "express"
-import {PrismaClient} from "@prisma/client"
-import jwt from "jsonwebtoken"
-import crypto from "crypto"
-import bcrypt from "bcrypt";
+// import {Request,Response} from "express"
+// import {PrismaClient} from "@prisma/client"
+// import jwt from "jsonwebtoken"
+// import crypto from "crypto"
+// import bcrypt from "bcrypt";
 
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
-export const registerUSer = async (req:any,res:Response)=>{
-    try {
-        const {name,email,password} = req.body
+// export const registerUSer = async (req:any,res:Response)=>{
+//     try {
+//         const {name,email,password} = req.body
 
-        const salt = await bcrypt.genSalt(10)
+//         const salt = await bcrypt.genSalt(10)
 
-        const hashed = await bcrypt.hash(password,salt);
+//         const hashed = await bcrypt.hash(password,salt);
 
-        const value = crypto.randomBytes(16).toString("hex")
+//         const value = crypto.randomBytes(16).toString("hex")
 
-        const token = jwt.sign(value, "justRand")
+//         const token = jwt.sign(value, "justRand")
 
-        const user = await prisma.authModel.create({
-            data:{
-                name,
-                email,
-                password:hashed,token  
-            }
-        })
+//         const user = await prisma.authModel.create({
+//             data:{
+//                 name,
+//                 email,
+//                 password:hashed,token  
+//             }
+//         })
 
-        // const tokenID = jwt.sign({
-            // id:user.id},"justRand");sendAccountOpeningMail(user,tokenID)
+//         // const tokenID = jwt.sign({
+//             // id:user.id},"justRand");sendAccountOpeningMail(user,tokenID)
         
-            return res.status(201).json({
-                message: "User created",
-                data: user,
-              });
+//             return res.status(201).json({
+//                 message: "User created",
+//                 data: user,
+//               });
 
-    } catch (error) {
-        return res.status(404).json({
-            message:"Error Registing into our platform"
-        })
-    }
-}
+//     } catch (error) {
+//         return res.status(404).json({
+//             message:"Error Registing into our platform"
+//         })
+//     }
+// }
 
-export const signInUSer = async (req:Request, res:Response)=>{
-try {
-    const { email, password } = req.body;
+// export const signInUSer = async (req:Request, res:Response)=>{
+// try {
+//     const { email, password } = req.body;
 
-    const user = await prisma.authModel.findUnique({
-        where: { email },
-      });
+//     const user = await prisma.authModel.findUnique({
+//         where: { email },
+//       });
 
-      if (user) {
-        const check = await bcrypt.compare(password, user.password);
+//       if (user) {
+//         const check = await bcrypt.compare(password, user.password);
 
-        if (check) {
-            if (user.verified && user.token !== "") {
-              const token = jwt.sign(
-                {
-                  id: user.id,
-                },
-                "secret",
-                { expiresIn: "10d" }
-              );
-              return res.status(201).json({
-                message: `Welcome back ${user.name}`,
-                user: token,
-              });
-        } else {
-            return res.status(404).json({
-                message: "Please go and verify your account",
-              });
-        }
+//         if (check) {
+//             if (user.verified && user.token !== "") {
+//               const token = jwt.sign(
+//                 {
+//                   id: user.id,
+//                 },
+//                 "secret",
+//                 { expiresIn: "10d" }
+//               );
+//               return res.status(201).json({
+//                 message: `Welcome back ${user.name}`,
+//                 user: token,
+//               });
+//         } else {
+//             return res.status(404).json({
+//                 message: "Please go and verify your account",
+//               });
+//         }
 
-      } else {
-        return res.status(404).json({
-            message: "incorrect password",
-        })
-      }
-    } else {
-        return res.status(404).json({
-          message: "can't find user",
-        });
-      }
-} catch (error) {
-    return res.status(404).json({
-        message: "Error signing into our platform",
-      });
-}
-}
+//       } else {
+//         return res.status(404).json({
+//             message: "incorrect password",
+//         })
+//       }
+//     } else {
+//         return res.status(404).json({
+//           message: "can't find user",
+//         });
+//       }
+// } catch (error) {
+//     return res.status(404).json({
+//         message: "Error signing into our platform",
+//       });
+// }
+// }
 
-export const verifiedUSer = async (req: Request, res: Response) => {
-    try {
-      const { token } = req.params;
+// export const verifiedUSer = async (req: Request, res: Response) => {
+//     try {
+//       const { token } = req.params;
   
-      const getID: any = jwt.verify(token, "justRand", (err, payload: any) => {
-        if (err) {
-          return err;
-        } else {
-          return payload;
-        }
-      });
+//       const getID: any = jwt.verify(token, "justRand", (err, payload: any) => {
+//         if (err) {
+//           return err;
+//         } else {
+//           return payload;
+//         }
+//       });
   
-      const user = await prisma.authModel.update({
-        where: { id: getID },
-        data: {
-          verified: true,
-          token: "",
-        },
-      });
+//       const user = await prisma.authModel.update({
+//         where: { id: getID },
+//         data: {
+//           verified: true,
+//           token: "",
+//         },
+//       });
   
-      return res.status(201).json({
-        message: "Account verified",
-        data: user,
-      });
-    } catch (error) {
-      return res.status(404).json({
-        message: "Error verifying Account",
-      });
-    }
-  };
+//       return res.status(201).json({
+//         message: "Account verified",
+//         data: user,
+//       });
+//     } catch (error) {
+//       return res.status(404).json({
+//         message: "Error verifying Account",
+//       });
+//     }
+//   };
 
-  export const viewUsers = async (req: Request, res: Response) => {
-    try {
-      const user = await prisma.authModel.findMany({});
+//   export const viewUsers = async (req: Request, res: Response) => {
+//     try {
+//       const user = await prisma.authModel.findMany({});
   
-      return res.status(200).json({
-        message: "Users found",
-        data: user,
-      });
-    } catch (error) {
-      return res.status(404).json({
-        message: "Error viewing Users",
-      });
-    }
-  };
+//       return res.status(200).json({
+//         message: "Users found",
+//         data: user,
+//       });
+//     } catch (error) {
+//       return res.status(404).json({
+//         message: "Error viewing Users",
+//       });
+//     }
+//   };
 
-  export const viewOneUser = async (req: Request, res: Response) => {
-    try {
-      const { userID } = req.params;
-      const user = await prisma.authModel.findUnique({
-        where: { id: userID },
-      });
+//   export const viewOneUser = async (req: Request, res: Response) => {
+//     try {
+//       const { userID } = req.params;
+//       const user = await prisma.authModel.findUnique({
+//         where: { id: userID },
+//       });
   
-      return res.status(200).json({
-        message: "User found",
-        data: user,
-      });
-    } catch (error) {
-      return res.status(404).json({
-        message: "Error viewing single User",
-      });
-    }
-  };
+//       return res.status(200).json({
+//         message: "User found",
+//         data: user,
+//       });
+//     } catch (error) {
+//       return res.status(404).json({
+//         message: "Error viewing single User",
+//       });
+//     }
+//   };
 
-  export const updateUserInfo = async (req: Request, res: Response) => {
-    try {
-      const { userID } = req.params;
-      const { name } = req.body;
+//   export const updateUserInfo = async (req: Request, res: Response) => {
+//     try {
+//       const { userID } = req.params;
+//       const { name } = req.body;
   
-      const user = await prisma.authModel.update({
-        where: { id: userID },
-        data: { name },
-      });
+//       const user = await prisma.authModel.update({
+//         where: { id: userID },
+//         data: { name },
+//       });
   
-      return res.status(201).json({
-        message: "user updated",
-        data: user,
-      });
-    } catch (error) {
-      return res.status(404).json({
-        message: "Error updating user",
-      });
-    }
-  };
+//       return res.status(201).json({
+//         message: "user updated",
+//         data: user,
+//       });
+//     } catch (error) {
+//       return res.status(404).json({
+//         message: "Error updating user",
+//       });
+//     }
+//   };
   
-  export const updateUserAvatar = async (req: any, res: Response) => {
-    try {
-      const { userID } = req.params;
+//   export const updateUserAvatar = async (req: any, res: Response) => {
+//     try {
+//       const { userID } = req.params;
   
-    //   const { secure_url, public_id }: any = await streamUpload(req);
+//     //   const { secure_url, public_id }: any = await streamUpload(req);
   
-    //   const user = await prisma.authModel.update({
-    //     where: { id: userID },
-    //     data: { avatar: secure_url, avatarID: public_id },
-    //   });
+//     //   const user = await prisma.authModel.update({
+//     //     where: { id: userID },
+//     //     data: { avatar: secure_url, avatarID: public_id },
+//     //   });
   
-      return res.status(201).json({
-        message: "User image updated",
-        // data: user,
-      });
-    } catch (error) {
-      return res.status(404).json({
-        message: "Error updating User Image",
-      });
-    }
-  };
+//       return res.status(201).json({
+//         message: "User image updated",
+//         // data: user,
+//       });
+//     } catch (error) {
+//       return res.status(404).json({
+//         message: "Error updating User Image",
+//       });
+//     }
+//   };
 
-  export const deleteUser = async (req: Request, res: Response) => {
-    try {
-      const { userID } = req.params;
+//   export const deleteUser = async (req: Request, res: Response) => {
+//     try {
+//       const { userID } = req.params;
   
-      await prisma.authModel.delete({
-        where: { id: userID },
-      });
+//       await prisma.authModel.delete({
+//         where: { id: userID },
+//       });
   
-      return res.status(201).json({
-        message: "User deleted",
-      });
-    } catch (error) {
-      return res.status(404).json({
-        message: "Error deleting User",
-      });
-    }
-  };
+//       return res.status(201).json({
+//         message: "User deleted",
+//       });
+//     } catch (error) {
+//       return res.status(404).json({
+//         message: "Error deleting User",
+//       });
+//     }
+//   };
 
 
-  export const changeAccountPassword = async (req: Request, res: Response) => {
-    try {
-      const { token } = req.params;
-      const { password } = req.body;
+//   export const changeAccountPassword = async (req: Request, res: Response) => {
+//     try {
+//       const { token } = req.params;
+//       const { password } = req.body;
   
-      const getID: any = jwt.verify(token, "justRand", (err, payload: any) => {
-        if (err) {
-          return err;
-        } else {
-          return payload.id;
-        }
-      });
+//       const getID: any = jwt.verify(token, "justRand", (err, payload: any) => {
+//         if (err) {
+//           return err;
+//         } else {
+//           return payload.id;
+//         }
+//       });
   
-      const user = await prisma.authModel.findUnique({
-        where: { id: getID },
-      });
+//       const user = await prisma.authModel.findUnique({
+//         where: { id: getID },
+//       });
   
-      if (user?.verified && user.token !== "") {
-        const salt = await bcrypt.genSalt(10);
-        const hashed = await bcrypt.hash(password, salt);
+//       if (user?.verified && user.token !== "") {
+//         const salt = await bcrypt.genSalt(10);
+//         const hashed = await bcrypt.hash(password, salt);
   
-        await prisma.authModel.update({
-          where: { id: user.id },
-          data: {
-            password: hashed,
-          },
-        });
+//         await prisma.authModel.update({
+//           where: { id: user.id },
+//           data: {
+//             password: hashed,
+//           },
+//         });
   
-        return res.status(201).json({
-          message: "Your password has been changed",
-        });
-      } else {
-        return res.status(404).json({
-          message: "can't reset this password",
-        });
-      }
-    } catch (error) {
-      return res.status(404).json({
-        message: "Error verifying Account",
-      });
-    }
-  };
+//         return res.status(201).json({
+//           message: "Your password has been changed",
+//         });
+//       } else {
+//         return res.status(404).json({
+//           message: "can't reset this password",
+//         });
+//       }
+//     } catch (error) {
+//       return res.status(404).json({
+//         message: "Error verifying Account",
+//       });
+//     }
+//   };
