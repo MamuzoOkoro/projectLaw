@@ -4,45 +4,94 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-export const verifyUser = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const token = req.headers.authorization;
-      if (token) {
-        const realToken = token.split(" ")[1];
-        if (realToken) {
-          jwt.verify(realToken, "secret", (err, payload:any) => {
-            if (err) {
-              return res.status(404).json({
-                message: "error",
-                data: err,
-              });
+export const verifyAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const value = req.headers.authorization;
+    if (value) {
+      const realValue = value.split(" ")[1];
+      if (realValue) {
+        jwt.verify(realValue, "secret", async (err, payload: any) => {
+          if (err) {
+            return res.status(404).json({
+              message: "jwt payload error",
+            });
+          } else {
+            const user = await prisma.authModel.findUnique({
+              where: { id: payload },
+            });
+
+            if (user?.role === "lawyer") {
+              next();
             } else {
-             if (payload.email ==="") {
-              next()
-             }else{
               return res.status(404).json({
-                  message: "you don't have permission",
-                });
-             }
+                message: "You're not Authorized to handle this Page",
+              });
             }
-          });
-        } else {
-          return res.status(404).json({
-            message: "error",
-          });
-        }
+          }
+        });
       } else {
         return res.status(404).json({
-          message: "error, check your token",
+          message: "Token gotten not correct",
         });
       }
-    } catch (error) {
+    } else {
       return res.status(404).json({
-        message: "error",
+        message: "invalid Token",
       });
     }
-  };
+  } catch (error) {
+    return res.status(404).json({
+      message: "Error Found",
+    });
+  }
+};
+
+export const verifyUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const value = req.headers.authorization;
+    if (value) {
+      const realValue = value.split(" ")[1];
+      if (realValue) {
+        jwt.verify(realValue, "secret", async (err, payload: any) => {
+          if (err) {
+            return res.status(404).json({
+              message: "jwt payload error",
+            });
+          } else {
+            const user = await prisma.authModel.findUnique({
+              where: { id: payload },
+            });
+
+            if (user?.role === "lawyer" || user?.role === "user") {
+              next();
+            } else {
+              return res.status(404).json({
+                message: "You're not Authorized to handle this Page",
+              });
+            }
+          }
+        });
+      } else {
+        return res.status(404).json({
+          message: "Token gotten not correct",
+        });
+      }
+    } else {
+      return res.status(404).json({
+        message: "invalid Token",
+      });
+    }
+  } catch (error) {
+    return res.status(404).json({
+      message: "Error Found",
+    });
+  }
+};

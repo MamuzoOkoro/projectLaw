@@ -1,8 +1,4 @@
-// import {Request,Response} from "express"
-// import {PrismaClient} from "@prisma/client"
-// import jwt from "jsonwebtoken"
-// import crypto from "crypto"
-// import bcrypt from "bcrypt";
+
 
 
 // const prisma = new PrismaClient();
@@ -18,17 +14,6 @@
 //         const value = crypto.randomBytes(16).toString("hex")
 
 //         const token = jwt.sign(value, "justRand")
-
-//         const user = await prisma.authModel.create({
-//             data:{
-//                 name,
-//                 email,
-//                 password:hashed,token  
-//             }
-//         })
-
-//         // const tokenID = jwt.sign({
-//             // id:user.id},"justRand");sendAccountOpeningMail(user,tokenID)
         
 //             return res.status(201).json({
 //                 message: "User created",

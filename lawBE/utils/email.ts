@@ -32,7 +32,7 @@ export const sendAccountOpeningMail = async (user: any, tokenID: string) => {
     });
 
     const passedData = {
-      userName: user.userName,
+      userName: user.name,
       url: `${url}/${tokenID}/verify-account`,
     };
 
@@ -70,18 +70,18 @@ export const resetAccountPassword = async (user: any, tokenID: string) => {
     });
 
     const passedData = {
-      userName: user.userName,
-      url: `${url}/${tokenID}/verify-account`,
+      userName: user.name,
+      url: `${url}/${tokenID}/reset-account-password`,
     };
 
-    const readData = path.join(__dirname, "../views/index.ejs");
+    const readData = path.join(__dirname, "../views/resetPassword.ejs");
     const data = await ejs.renderFile(readData, passedData);
 
     const mailer = {
       from: " <ajegunlelaw@gmail.com > ",
       to: user.email,
       subject:
-        "Welcome to AJ LAW Constituency, Where Ajegunle's Laws are clarified and properly interpreted!",
+        "Welcome to AJ LAW Constituency, you can now reset your password",
       html: data,
     };
 
