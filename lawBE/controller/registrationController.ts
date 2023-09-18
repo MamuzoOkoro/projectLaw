@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { role } from "../utils/roles";
-import { sendAccountOpeningMail } from "../utils/email";
+import { resetAccountPassword, sendAccountOpeningMail } from "../utils/email";
 import { streamUpload } from "../utils/uploadHelper";
 
 const prisma = new PrismaClient();
@@ -19,7 +19,7 @@ export const registerUSer = async (req: any, res: Response) => {
 
     const value = crypto.randomBytes(16).toString("hex");
 
-    const token = jwt.sign(value, "justRand");
+    const token = jwt.sign(value, "ajLaw");
 
     const user = await prisma.authModel.create({
       data: {
@@ -27,7 +27,7 @@ export const registerUSer = async (req: any, res: Response) => {
         email,
         password: hashed,
         token,
-        role: role.ADMIN,
+        role: role.USER,
       },
     });
 
@@ -35,7 +35,7 @@ export const registerUSer = async (req: any, res: Response) => {
       {
         id: user.id,
       },
-      "justRand"
+      "ajLaw"
     );
     sendAccountOpeningMail(user, tokenID);
 
@@ -50,63 +50,44 @@ export const registerUSer = async (req: any, res: Response) => {
   }
 };
 
-export const registerLawyerAccount = async (req: Request, res: Response) => {
+export const registerLawyer= async(req:Request, res:Response)=>{
   try {
-    const { name, email, password, lawyerID } = req.body;
+    const {name, password, email, lawyerSecret }= req.body;
 
-    const salt = await bcrypt.genSalt(10);
-    const hashed = await bcrypt.hash(password, salt);
-    const value = crypto.randomBytes(16).toString("hex");
-    const token = jwt.sign(value, "justRand");
+    const salt= await bcrypt.genSalt(10)
+    const hash= await bcrypt.hash(password, salt)
+    const value=  crypto.randomBytes(32).toString("hex")
+    const token=  jwt.sign(value, "ajLaw")
 
-    const sreachData = [
-      {
-        id: 1,
-      },
-      {
-        id: 2,
-      },
-      {
-        id: 3,
-      },
-      {
-        id: 4,
-      },
-    ];
-
-    const findLawyer = sreachData.some((el: any) => el.id === lawyerID);
-
-    if (findLawyer) {
-      const user = await prisma.authModel.create({
-        data: {
+    if (lawyerSecret === "law") {
+      const lawyer = await prisma.authModel.create({
+        data:{
           name,
           email,
-          password: hashed,
+          password:hash,
           token,
-          role: role.ADMIN,
-        },
-      });
+          role: role.ADMIN
+        }
+      })
 
-      const tokenID = jwt.sign({ id: user.id }, "justRand");
-      sendAccountOpeningMail(user, tokenID);
+      const tokenID= jwt.sign({id: lawyer.id}, "ajLaw");
+      sendAccountOpeningMail(lawyer, tokenID)
 
       return res.status(201).json({
-        message: "Account created",
-        data: user,
-      });
-    } else {
+        message: "Lawyer Account created successfully",
+        data: lawyer
+      })
+    }else{
       return res.status(404).json({
-        message: "Please check your Lawyer ID",
-      });
+        message: "Invalid lawyerSecret"
+      })
     }
-  } catch (error) {
-    return res.status(404).json({
-      message: "Error creating Account",
-    });
+  } catch (error:any) {
+    return res.status(400).json({message: error.message})
   }
-};
+}
 
-export const signInUSer = async (req: Request, res: Response) => {
+export const signInUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -118,7 +99,7 @@ export const signInUSer = async (req: Request, res: Response) => {
       const check = await bcrypt.compare(password, user.password);
 
       if (check) {
-        if (user.verified && user.token !== "") {
+        if (user.verified && user.token === "") {
           const token = jwt.sign(
             {
               id: user.id,
@@ -156,7 +137,7 @@ export const verifiedUSer = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
 
-    const getID: any = jwt.verify(token, "justRand", (err, payload: any) => {
+    const getID: any = jwt.verify(token, "ajLaw", (err, payload: any) => {
       if (err) {
         return err;
       } else {
@@ -282,7 +263,7 @@ export const changeAccountPassword = async (req: Request, res: Response) => {
     const { token } = req.params;
     const { password } = req.body;
 
-    const getID: any = jwt.verify(token, "justRand", (err, payload: any) => {
+    const getID: any = jwt.verify(token, "ajLaw", (err, payload: any) => {
       if (err) {
         return err;
       } else {
@@ -320,38 +301,37 @@ export const changeAccountPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const resetAccountPassword = async (req: Request, res: Response) => {
-    try {
-      const { email } = req.body;
-  
-      const user = await prisma.authModel.findUnique({
-        where: { email },
-      });
-  
-      if (user?.verified && user.token === "") {
-        const token = jwt.sign({ id: user.id }, "justRand");
-  
-        await prisma.authModel.update({
-          where: { id: user.id },
-          data: {
-            token,
-          },
-        });
-  
-        resetAccountPassword(user, token);
-  
-        return res.status(201).json({
-          message: "You can now change your Password",
-          data: token,
-        });
-      } else {
-        return res.status(404).json({
-          message: "can't reset this password",
-        });
-      }
-    } catch (error) {
+export const resetAccountpassword=async(req:Request, res:Response)=>{
+  try {
+    const {email}= req.body;
+    const user = await prisma.authModel.findUnique({
+      where:{email}
+    })
+
+    if(user?.verified && user.token ===""){
+      const token = jwt.sign({id: user.id}, "ajLaw")
+      await prisma.authModel.update({
+        where:{id: user.id},
+        data: {
+          token,
+        }
+      })
+
+      resetAccountPassword(user, token).then(()=>{
+        console.log("message Sent....!")
+      })
+      return res.status(201).json({
+        message: "Password reset",
+        data: token
+      })
+
+    }else {
       return res.status(404).json({
-        message: "Error verifying Account",
+        message: "can't reset this password",
       });
     }
-  };
+  } catch (error:any) {
+    return res.status(400).json({message: error.message})
+    
+  }
+}

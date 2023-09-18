@@ -1,41 +1,24 @@
-import express from "express";
-import {
-  changeAccountPassword,
-  deleteAccount,
-  registerAccount,
-  resetAccountPassword,
-  signInAccount,
-  updateAccountAvatar,
-  updateAccountInfo,
-  verifiedAccount,
-  viewAccount,
-  viewAccounts,
-} from "../controller/registrationController";
-import validatorHolder from "../utils/validatorHolder";
-import { createAccountValidator } from "../utils/validator";
-const router = express.Router();
+import express from "express"
+import { changeAccountPassword, deleteUser, registerLawyer, registerUSer, resetAccountpassword, signInUser, updateUserAvatar, updateUserInfo, verifiedUSer, viewOneUser, viewUsers } from "../controller/registrationController";
+import validatorHandler from "../utils/validatorHandler"
+import { createAdminValidator, createUserValidator } from "../utils/validator";
 import multer from "multer";
+const myUpload= multer().single("avatar")
 
-const myUpload = multer().single("avatar");
+const regRouter= express.Router();
 
-router.route("/all-accounts").get(viewAccounts);
-router.route("/:userID/single-account").get(viewAccount );
-router.route("/:userID/delete").delete(deleteAccount);
+regRouter.route("/all-account").get(viewUsers)
+regRouter.route("/:userID/single-account").get(viewOneUser)
+regRouter.route("/:userID/delete").delete(deleteUser)
 
-router
-  .route("/create-account")
-  .post(validatorHolder(createAccountValidator), registerAccount);
+regRouter.route("/register").post( validatorHandler(createUserValidator),registerUSer)
+regRouter.route("/sign-in").post(signInUser)
+regRouter.route("/:token/verify-account").post(verifiedUSer)
+regRouter.route("/register-admin").post(validatorHandler(createAdminValidator),registerLawyer)
 
-router.route("/sign-in-account").post(signInAccount);
+regRouter.route("/:userID/update-account-info").patch(updateUserInfo)
+regRouter.route("/reset-account-password").patch(resetAccountpassword)
+regRouter.route("/:token/change-account-password").patch(changeAccountPassword)
+regRouter.route("/:userID/update-account-avatar").patch(myUpload,updateUserAvatar)
 
-router.route("/:token/verify-account").post(verifiedAccount);
-
-router.route("/:userID/update-account-info").patch(updateAccountInfo);
-router
-  .route("/:userID/update-account-avatar")
-  .patch(myUpload, updateAccountAvatar);
-router.route("/reset-account-password").patch(resetAccountPassword);
-
-router.route("/:token/change-account-password").patch(changeAccountPassword);
-
-export default router;
+export default regRouter;
