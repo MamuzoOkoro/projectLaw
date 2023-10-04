@@ -1,49 +1,4 @@
-import {Request,Response} from "express"
-import {PrismaClient} from "@prisma/client"
-import jwt from "jsonwebtoken"
-import crypto from "crypto"
-import bcrypt from "bcrypt";
-import { role } from "../utils/roles";
 
-
-const prisma = new PrismaClient();
-
-export const registerUSer = async (req:any,res:Response)=>{
-    try {
-        const {name,email,password} = req.body
-
-        const salt = await bcrypt.genSalt(10)
-
-        const hashed = await bcrypt.hash(password,salt);
-
-        const value = crypto.randomBytes(16).toString("hex")
-
-        const token = jwt.sign(value, "justRand")
-
-        const user = await prisma.authModel.create({
-            data:{
-                name,
-                email,
-                password:hashed,
-                token,
-                role:role.USER,
-            }
-        })
-
-        // const tokenID = jwt.sign({
-        //     id:user.id},"justRand");sendAccountOpeningMail(user,tokenID)
-        
-            return res.status(201).json({
-                message: "User created",
-                data: user,
-              });
-
-    } catch (error) {
-        return res.status(404).json({
-            message:"Error Registing into our platform"
-        })
-    }
-}
 
 export const SignInUser = async (req: Request, res: Response) => {
   try {

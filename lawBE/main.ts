@@ -2,6 +2,9 @@ import cors from "cors";
 import express, { Application } from "express";
 import morgan from "morgan";
 import helmet from "helmet"
+import auth from "./router/registrationRouter"
+import law from "./router/lawyerRouter"
+import reply from "./router/replyRouter"
 
 export const main = (app: Application) => {
   app.use(express.json());
@@ -39,4 +42,8 @@ export const main = (app: Application) => {
           });
     }
   })
+
+  app.use("/api/v1/auth", auth)
+  app.use("/api/v1/law", law)
+  app.use("/api/v1/user", reply)
 };
