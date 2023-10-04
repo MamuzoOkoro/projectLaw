@@ -45,54 +45,54 @@ export const registerUSer = async (req:any,res:Response)=>{
     }
 }
 
-export const signInUSer = async (req:Request, res:Response)=>{
-try {
+export const SignInUser = async (req: Request, res: Response) => {
+  try {
     const { email, password } = req.body;
 
     const user = await prisma.authModel.findUnique({
-        where: { email },
-      });
+      where: { email },
+    });
 
-      if (user) {
-        const check = await bcrypt.compare(password, user.password);
+    if (user) {
+      const check = await bcrypt.compare(password, user.password);
 
-        if (check) {
-            if (user.verified && user.token !== "") {
-              const token = jwt.sign(
-                {
-                  id: user.id,
-                },
-                "secret",
-                { expiresIn: "10d" }
-              );
-              return res.status(201).json({
-                message: `Welcome back ${user.name}`,
-                user: token,
-              });
+      if (check) {
+        if (user.verified && user.token === "") {
+          const token = jwt.sign(
+            {
+              id: user.id,
+            },
+            "secret",
+            { expiresIn: "3d" }
+          );
+
+          return res.status(201).json({
+            message: `Welcome back ${user.email}`,
+            user: token,
+          });
         } else {
-            return res.status(404).json({
-                message: "Please go and verify your account",
-              });
+          return res.status(404).json({
+            message: "Please go and verify your account",
+          });
         }
-
       } else {
         return res.status(404).json({
-            message: "incorrect password",
-        })
-      }
-    } else {
-        return res.status(404).json({
-          message: "can't find user",
+          message: "check your password",
         });
       }
-} catch (error) {
-    return res.status(404).json({
-        message: "Error signing into our platform",
+    } else {
+      return res.status(404).json({
+        message: "cannot find user",
       });
-}
-}
+    }
+  } catch (error) {
+    return res.status(404).json({
+      message: "Error signing in",
+    });
+  }
+};
 
-export const verifiedUSer = async (req: Request, res: Response) => {
+export const verifyUSer = async (req: Request, res: Response) => {
     try {
       const { token } = req.params;
   
@@ -112,6 +112,8 @@ export const verifiedUSer = async (req: Request, res: Response) => {
         },
       });
   
+
+      
       return res.status(201).json({
         message: "Account verified",
         data: user,
@@ -122,7 +124,7 @@ export const verifiedUSer = async (req: Request, res: Response) => {
       });
     }
   };
-
+  
   export const viewUsers = async (req: Request, res: Response) => {
     try {
       const user = await prisma.authModel.findMany({});
